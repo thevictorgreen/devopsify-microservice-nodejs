@@ -144,6 +144,55 @@ function AccountsController() {
   };
 
 
+  that.authemail = function(req,res,next) {
+
+    res.setHeader('Content-Type', 'application/json');
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.setHeader('Access-Control-Allow-Headers', 'X-Requested-With');
+
+    var accountRecord = req.body.account;
+    var email = req.body.email;
+
+    mongodb.connect(url, function(err,db) {
+        if (err) {
+            throw err;
+        }
+        else {
+            db.collection("accounts").find(accountRecord).toArray(function(err,result){
+                if (err) {
+                    throw err;
+                    res.json({"status":"error"});
+                    db.close();
+                }
+                else {
+                    var results = {};
+                    if ( result.length == 0 ) {
+                      res.json({"status":"ERROR"});
+                      db.close();
+                    }
+                    else {
+
+                      results.status = "ERROR";
+
+                      for (var i = 0;i < result[0].company.authorized_users.length;i++) {
+                        if (email == result[0].company.authorized_users[i].user_email) {
+                          results.status = "SUCCESS";
+                          results.data = result[0];
+                          break;
+                        }
+                      }
+
+                      res.json(results);
+                      db.close();
+                    }
+                }
+            });
+        }
+    });
+    next();
+  };
+
+
   // RETREIVE ALL ITEMS
   that.get = function(req,res,next) {
 

@@ -19,6 +19,7 @@ accounts   = require('./accounts');
 
 server.post('/accounts', accounts.post);
 server.post('/accounts/auth', accounts.auth);
+server.post('/accounts/authemail', accounts.authemail);
 server.post('/accounts/payment', accounts.payment);
  server.get('/accounts', accounts.get);
  server.get('/accounts/:value', accounts.getByValue);
