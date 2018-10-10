@@ -5,6 +5,9 @@ function AccountsController() {
   var url     = "mongodb://localhost:27017/cloudking";
   var sha256  = require('sha256');
   var stripe  = require("stripe")("sk_test_dpJAvobmpiiriLnH45rrQAlF");
+  var mailgun_api_key = 'f7524fcd78e5b9f5e4d5978b200b9c74-bd350f28-a07312f3';
+  var mailgun_domain = 'sandbox0799542bbd5a4827b4cd5bc885a92907.mailgun.org';
+  var mailgun = require('mailgun-js')({apiKey: mailgun_api_key, domain: mailgun_domain});
 
 
   // CREATE NEW ITEM
@@ -188,6 +191,32 @@ function AccountsController() {
                 }
             });
         }
+    });
+    next();
+  };
+
+
+  // SEND EMAIL MESSAGE TO USER ACCOUNT
+  that.sendemail = function(req,res,next) {
+
+    res.setHeader('Content-Type', 'application/json');
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.setHeader('Access-Control-Allow-Headers', 'X-Requested-With');
+
+    var messageRecord = req.body.message;
+
+    mailgun.messages().send(messageRecord, function(err,body) {
+      if (err) {
+        throw err;
+        res.json({"status":"error"});
+      }
+      else {
+        console.log("SENT MESSAGE");
+        var results = {};
+        results.status = "SUCCESS";
+        results.data = body.message;
+        res.json(results);
+      }
     });
     next();
   };
