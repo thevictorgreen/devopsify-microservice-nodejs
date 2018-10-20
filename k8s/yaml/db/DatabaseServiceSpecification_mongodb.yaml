@@ -1,0 +1,59 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: msvc1-db-service
+  namespace: development-change_me
+  labels:
+    app: msvc1-db
+spec:
+  ports:
+  - port: 27017
+    targetPort: 27017
+    protocol: TCP
+  selector:
+    app: msvc1-db
+---
+apiVersion: apps/v1 # for versions before 1.9.0 use apps/v1beta2
+kind: Deployment
+metadata:
+  name: msvc1-db-deployment
+  namespace: development-change_me
+spec:
+  selector:
+    matchLabels:
+      app: mvsvc1-db
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: msvc1-db
+    spec:
+      containers:
+      - image: mongo
+        name: msvc1-db-container
+        ports:
+        - containerPort: 27017
+          name: msvc1-db-container-port
+        volumeMounts:
+        - name: msvc1-db-persistent-storage
+          mountPath: /data/db
+      volumes:
+      - name: msvc1-db-persistent-storage
+        persistentVolumeClaim:
+          claimName: msvc1-db-claim
+---
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: msvc1-db-claim
+  namespace: development-change_me
+spec:
+  storageClassName: glusterfs
+  accessModes:
+    - ReadWriteOnce
+  volumeMode: Filesystem
+  resources:
+    requests:
+      storage: 8Gi
+# kubectl run -it --rm --image=mysql:5.6 --restart=Never mysql-client -- mysql -h mysqlservice -ppassword

@@ -1,0 +1,30 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: my-nginx-ingress
+  namespace: development-change_me
+  annotations:
+    kubernetes.io/ingress.class: traefik
+spec:
+  rules:
+  - host: msvc1.domain.suffix
+    http:
+      paths:
+      - path: /
+        backend:
+          serviceName: msvc1-service
+          servicePort: 80
+  - host: msvc2.domain.suffix
+    http:
+      paths:
+      - path: /
+        backend:
+          serviceName: msvc2-service
+          servicePort: 3000
+  - host: msvc3.domain.suffix
+    http:
+      paths:
+      - path: /
+        backend:
+          serviceName: msvc3.domain.suffix
+          servicePort: 80

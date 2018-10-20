@@ -1,0 +1,28 @@
+{
+  "name": "devopsify-microservice-nodejs",
+  "version": "0.0.1",
+  "private": true,
+  "scripts": {
+    "start": "node index.js",
+    "test": "mocha"
+  },
+  "engines": {
+    "node": "^8.8.1"
+  },
+  "dependencies": {
+    "mongodb": "^2.2.33",
+    "mysql": "^2.10.2",
+    "restify": "*",
+    "restify-cors-middleware": "^1.1.0",
+    "sha256": "^0.2.0",
+    "stripe": "^5.7.0",
+    "mailgun-js": "*"
+  },
+  "devDependencies": {
+    "mocha": "^3.4.2"
+  },
+  "main": "index.js",
+  "author": "Victor Green",
+  "license": "ISC",
+  "description": "Server Provisioning API"
+}

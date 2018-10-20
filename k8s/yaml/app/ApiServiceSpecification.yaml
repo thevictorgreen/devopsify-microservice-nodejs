@@ -1,0 +1,43 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: msvc1-service
+  namespace: development-change_me
+  labels:
+    app: msvc1
+spec:
+  type: ClusterIP
+  ports:
+    - port: 3000
+      targetPort: 3000
+      protocol: TCP
+  selector:
+    app: msvc1
+---
+apiVersion: apps/v1 # for versions before 1.9.0 use apps/v1beta2
+kind: Deployment
+metadata:
+  name: msvc1-deployment
+  namespace: development-change_me
+spec:
+  selector:
+    matchLabels:
+      app: msvc1
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: msvc1
+    spec:
+      containers:
+      - image: vdigital/msvc1-image:tag
+        imagePullPolicy: Always
+        name: msvc1-container
+        env:
+          # Use secret in real usage
+        - name: MYDB_SERVICE_HOST
+          value: mongoservice
+        ports:
+        - containerPort: 3000
+          name: msvc1-container-port
