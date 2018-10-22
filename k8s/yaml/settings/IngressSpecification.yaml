@@ -1,7 +1,7 @@
 apiVersion: extensions/v1beta1
 kind: Ingress
 metadata:
-  name: my-nginx-ingress
+  name: my-app-ingress
   namespace: development-change_me
   annotations:
     kubernetes.io/ingress.class: traefik

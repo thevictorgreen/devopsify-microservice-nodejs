@@ -48,6 +48,17 @@ node("cicd-build-slaves") {
       }
     }
 
+    stage("DEPLOY") {
+      // DEPLOY IMAGE TO K8S DEVELOPMENT CLUSTER
+      println("Deploying App To K8S");
+      dir ("k8s/yaml") {
+        sh "kubectl apply -f settings/NamespaceSpecification.yaml"
+        sh "kubectl apply -f db/DatabaseServiceSpecification_mongodb.yaml"
+        sh "kubectl apply -f app/ApiServiceSpecification.yaml"
+        sh "kubectl apply -f settings/IngressSpecification.yaml"
+      }
+    }
+
   } catch(e) {
     currentBuild.result = "FAILED";
     throw e;
