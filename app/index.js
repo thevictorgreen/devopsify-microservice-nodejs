@@ -22,6 +22,7 @@ server.post('/accounts/auth', accounts.auth);
 server.post('/accounts/authemail', accounts.authemail);
 server.post('/accounts/payment', accounts.payment);
 server.post('/accounts/sendemail', accounts.sendemail);
+ server.get('/accounts/healthz', accounts.healthz);
  server.get('/accounts', accounts.get);
  server.get('/accounts/:value', accounts.getByValue);
  server.put('/accounts', accounts.put);

@@ -255,6 +255,20 @@ function AccountsController() {
   };
 
 
+  // CHECK IF MICROSERVICE IS AVAILABLE (INTERNALLY/EXTERNALLY)
+  that.healthz = function(req,res,next) {
+
+    res.setHeader('Content-Type', 'application/json');
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.setHeader('Access-Control-Allow-Headers', 'X-Requested-With');
+
+    var results = {};
+    results.status = "SUCCESS";
+    res.json(results);
+    next();
+  };
+
+
   // RETREIVE ALL ITEMS MATCHING A PARAMETER
   that.getByValue = function(req,res,next) {
 
