@@ -10,7 +10,9 @@ node("cicd-build-slaves") {
       //NOTIFYd
       notifyTeam("STARTED");
       // CLONE THE REPOSITORY INTO THE WORKSPACE
-      git url: 'https://github.com/thevictorgreen/nodemicro.git'
+      // SHOULD MATCH THE REPOSITORY DEFINED IN doac.yaml
+      // RUN devopsify --status to reveal
+      git url: 'REPLACE_ME'
       sh "git rev-parse --short HEAD > .git/commit-id"
       commit_id = readFile('.git/commit-id').trim()
     }
@@ -27,7 +29,7 @@ node("cicd-build-slaves") {
     stage("TEST") {
       // RUN TEST
       dir ("app") {
-        def myTestContainer = docker.image('node:4.6')
+        def myTestContainer = docker.image('node:8.8.1')
         myTestContainer.pull()
         myTestContainer.inside {
           sh "npm install --only=dev"
@@ -41,8 +43,10 @@ node("cicd-build-slaves") {
       dir ("app") {
         stage("DOCKER BUILD") {
           // BUILD AND PUSH IMAGE TO DOCKERHUB
-          docker.withRegistry("https://index.docker.io/v1/","cba2f3ad-7020-45db-9dc1-cd371a11fd85") {
-            def app = docker.build("vdigital/nodemicro:${commit_id}","../.").push()
+          // COPY ID FROM JENKINS CREDENTIALS EXAMPLE ID cba2f3ad-7020-45db-9dc1-cd371a11fd85
+          docker.withRegistry("https://index.docker.io/v1/","REPLACE_ME") {
+            //DOCKERHUB USERNAME / MICROSERVICE NAME EXAMPLE vdigital/myapp-userportal
+            def app = docker.build("REPLACE_ME:${commit_id}","../.").push()
           }
         }
       }
@@ -52,10 +56,13 @@ node("cicd-build-slaves") {
       // DEPLOY IMAGE TO K8S DEVELOPMENT CLUSTER
       println("Deploying App To K8S");
       dir ("k8s/yaml") {
-        sh "kubectl apply -f settings/NamespaceSpecification.yaml"
-        sh "kubectl apply -f db/DatabaseServiceSpecification_mongodb.yaml"
-        sh "kubectl apply -f app/ApiServiceSpecification.yaml"
-        sh "kubectl apply -f settings/IngressSpecification.yaml"
+        // SHOULD MATCH NAME OF MICROSERVICE
+        sh "kubectl apply -f REPLACE_ME-service.yaml"
+        sh "kubectl apply -f REPLACE_ME-deployment.yaml"
+        // UNCOMMENT AND RUN ONLY OF NEEDED
+        // SHOULD MATCH NAME OF MICROSERVICE
+        //sh "kubectl apply -f REPLACE_ME-db-service.yaml"
+        //sh "kubectl apply -f REPLACE_ME-ingress.yaml"
       }
     }
 
