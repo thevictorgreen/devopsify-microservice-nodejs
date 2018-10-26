@@ -2,7 +2,9 @@ function AccountsController() {
 
   var that = this;
   var mongodb = require('mongodb').MongoClient;
-  var url     = "mongodb://localhost:27017/cloudking";
+  var dbhost = process.env.MYDB_SERVICE_HOST;
+  //var url     = "mongodb://localhost:27017/cloudking"; // USE THIS FOR LOCAL DEV
+  var url     = "mongodb://"+dbhost+":27017/cloudking";  // USE THIS FOR DOCKER
   var sha256  = require('sha256');
   var stripe  = require("stripe")("sk_test_dpJAvobmpiiriLnH45rrQAlF");
   var mailgun_api_key = 'f7524fcd78e5b9f5e4d5978b200b9c74-bd350f28-a07312f3';

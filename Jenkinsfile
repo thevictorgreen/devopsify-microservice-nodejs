@@ -41,12 +41,20 @@ node("cicd-build-slaves") {
     stage("BUILD") {
       // BUILD AND PUSH IMAGE TO DOCKERHUB
       dir ("app") {
-        stage("DOCKER BUILD") {
+        stage("DOCKER BUILD AND TAG WITH COMMIT_ID") {
           // BUILD AND PUSH IMAGE TO DOCKERHUB
           // COPY ID FROM JENKINS CREDENTIALS EXAMPLE ID cba2f3ad-7020-45db-9dc1-cd371a11fd85
           docker.withRegistry("https://index.docker.io/v1/","REPLACE_ME") {
             //DOCKERHUB USERNAME / MICROSERVICE NAME EXAMPLE vdigital/myapp-userportal
             def app = docker.build("REPLACE_ME:${commit_id}","../.").push()
+          }
+        }
+        stage("DOCKER BUILD AND TAG WITH LATEST") {
+          // BUILD AND PUSH IMAGE TO DOCKERHUB
+          // COPY ID FROM JENKINS CREDENTIALS EXAMPLE ID cba2f3ad-7020-45db-9dc1-cd371a11fd85
+          docker.withRegistry("https://index.docker.io/v1/","REPLACE_ME") {
+            //DOCKERHUB USERNAME / MICROSERVICE NAME EXAMPLE vdigital/myapp-userportal
+            def app = docker.build("REPLACE_ME:latest","../.").push()
           }
         }
       }
@@ -57,12 +65,10 @@ node("cicd-build-slaves") {
       println("Deploying App To K8S");
       dir ("k8s/yaml") {
         // SHOULD MATCH NAME OF MICROSERVICE
+        // UNCOMMENT AND RUN ONLY OF NEEDED
+        //sh "kubectl apply -f REPLACE_ME-db-service.yaml"
         sh "kubectl apply -f REPLACE_ME-service.yaml"
         sh "kubectl apply -f REPLACE_ME-deployment.yaml"
-        // UNCOMMENT AND RUN ONLY OF NEEDED
-        // SHOULD MATCH NAME OF MICROSERVICE
-        //sh "kubectl apply -f REPLACE_ME-db-service.yaml"
-        //sh "kubectl apply -f REPLACE_ME-ingress.yaml"
       }
     }
 
